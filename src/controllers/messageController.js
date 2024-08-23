@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
-        cb(null, `${moment().tz('Asia/Manila').format('YYYY-MM-DD HH-mm-ss')}--${file.originalname}`);
+        cb(null, `${moment().tz('Asia/Manila').format('YYYY-MM-DD HH-mm-ss')}-${file.originalname}`);
     }
 });
 
@@ -32,10 +32,10 @@ async function sendMessage(req, res) {
             return res.status(400).json({ message: 'User does not exist' });
         }
 
-        if (!message && !file) {
-            return res.status(400).json({ message: 'Message or image is required' });
+        if (!message) {
+            return res.status(400).json({ message: 'Message is required' });
         }
-
+        
         const messageData = {
             username,
             message: message || null,
@@ -45,7 +45,7 @@ async function sendMessage(req, res) {
 
         await writeData('messages', messageData);
 
-        res.status(200).json(messageData);
+        res.status(200).json({ code: 200, message: "", messageInfo: { username, message, timestamp: messageData.timestamp, imageUrl: messageData.imageUrl } });
     } catch (error) {
         console.error('Error sending message', error);
         res.status(500).json({ message: 'Error sending message', error });
