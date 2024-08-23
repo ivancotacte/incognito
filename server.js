@@ -21,6 +21,7 @@ const sessionStore = new MongoDBStore({
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/uploads', express.static('uploads'));
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,

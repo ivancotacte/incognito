@@ -1,8 +1,24 @@
 import { writeData, readData } from '../db/mongoConnection.js';
+import multer from 'multer';
+import moment from 'moment-timezone';
+
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${moment().tz('Asia/Manila').format('YYYY-MM-DD HH-mm-ss')}--${file.originalname}`);
+    }
+});
+
+const upload = multer({ storage });
 
 async function sendMessage(req, res) {
     const { username } = req.params;
     const { message } = req.body;
+    const file = req.file; 
+
     try {
         const users = await readData('users');
 
@@ -16,17 +32,24 @@ async function sendMessage(req, res) {
             return res.status(400).json({ message: 'User does not exist' });
         }
 
-        if (!message) {
-            return res.status(400).json({ message: 'Message is required' });
+        if (!message && !file) {
+            return res.status(400).json({ message: 'Message or image is required' });
         }
 
-        await writeData('messages', { username, message, timestamp: new Date() });
+        const messageData = {
+            username,
+            message: message || null,
+            timestamp: moment().tz('Asia/Manila').format('YYYY-MM-DD HH:mm:ss'),
+            imageUrl: file ? file.path : null
+        };
 
-        res.status(200).json({ username: username, message: message });
+        await writeData('messages', messageData);
+
+        res.status(200).json(messageData);
     } catch (error) {
         console.error('Error sending message', error);
         res.status(500).json({ message: 'Error sending message', error });
     }
 }
 
-export { sendMessage };
+export { sendMessage, upload };

@@ -1,7 +1,7 @@
 import express from 'express';
-import { sendMessage } from '../controllers/messageController.js';
+import { sendMessage, upload } from '../controllers/messageController.js';
 const router = express.Router();
 
-router.get('/:username', sendMessage);
+router.get('/:username', upload.single('image'), sendMessage);
 
 export default router;
