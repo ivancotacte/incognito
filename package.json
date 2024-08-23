@@ -2,8 +2,12 @@
   "name": "incognito",
   "version": "1.0.0",
   "main": "server.js",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +19,14 @@
     "url": "https://github.com/ivancotacte/incognito/issues"
   },
   "homepage": "https://github.com/ivancotacte/incognito#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "connect-mongodb-session": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
 }
